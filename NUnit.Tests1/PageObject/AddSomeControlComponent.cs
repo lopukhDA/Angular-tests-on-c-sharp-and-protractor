@@ -22,28 +22,41 @@ namespace AngularJS_site_test.PageObject
             _driver.Navigate(url);
         }
 
-        public By InputToDo { get; set; } = NgBy.Model("todoList.todoText");
-        public By AllItemTodo { get; set; } = NgBy.Repeater("todo in todoList.todos");
+        public By InputTask { get; set; } = NgBy.Model("todoList.todoText");
+        public By AllItemTask { get; set; } = NgBy.Repeater("todo in todoList.todos");
         public By ButtonAddTask { get; set; } = By.CssSelector("input[value=add]");
+        public By AllTextTask { get; set; } = By.CssSelector("ul.unstyled span");
 
         public void InputNewTask(string text)
         {
-            _driver.SendKeys(InputToDo, text);
+            _driver.SendKeys(InputTask, text);
             _driver.Click(ButtonAddTask);
         }
 
         public int GetCountTask()
         {
-            return _driver.FindAllElements(AllItemTodo).Count;
+            return _driver.FindAllElements(AllItemTask).Count;
         }
 
         public string GetLastTask()
         {
-            IWebElement lastTaskElement = _driver.FindAllElements(AllItemTodo).Last<NgWebElement>();
+            IWebElement lastTaskElement = _driver.FindAllElements(AllItemTask).Last<NgWebElement>();
             string taskText = _driver.GetText(lastTaskElement);
             return taskText;
         }
 
+        public bool CheckForExecution(int number)
+        {
+            IList<NgWebElement> allElements = _driver.FindAllElements(AllTextTask);
+            bool check = _driver.CheckClassForElement(allElements[number], "done-true");
+            return check;
+        }
+
+        public void CompletedTask(int number)
+        {
+            IList<NgWebElement> allElements = _driver.FindAllElements(AllTextTask);
+            _driver.Click(allElements[number]);
+        }
 
     }
 }

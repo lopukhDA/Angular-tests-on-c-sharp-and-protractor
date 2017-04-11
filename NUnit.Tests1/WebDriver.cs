@@ -24,6 +24,7 @@ namespace AngularJS_site_test
         {
             Driver = new ChromeDriver();
             Driver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(10);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
             _ngDriver = new NgWebDriver(Driver);
             
             //_wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(_waitTimeout));
@@ -72,6 +73,12 @@ namespace AngularJS_site_test
             element.Click();
         }
 
+        public void Click(IWebElement element)
+        {
+            _log.Log($"Click to element {element.TagName}");
+            element.Click();
+        }
+
         public NgWebElement GetElement(By locator)
         {
             var el = _ngDriver.FindElement(locator);
@@ -85,10 +92,31 @@ namespace AngularJS_site_test
             return allElements;
         }
 
-        //public Collection GetElements(By locator)
-        //{
-        //    var el = _ngDriver.FindElements(locator);
-        //    return el;
-        //}
+        public bool CheckClassForElement(By locator, string classCheck)
+        {
+            bool flag = false;
+            var element = GetElement(locator);
+            _log.Log($"Check class \"{classCheck}\" for locator {locator}");
+            if (element.GetAttribute("class").Contains(classCheck))
+            {
+                _log.Log($"Class \"{classCheck}\" is present for locator {locator}");
+                flag = true;
+            }
+            return flag;
+        }
+
+        public bool CheckClassForElement(IWebElement element, string classCheck)
+        {
+            bool flag = false;
+            
+            _log.Log($"Check class \"{classCheck}\" for element tag name {element.TagName}");
+            if (element.GetAttribute("class").Contains(classCheck))
+            {
+                _log.Log($"Class \"{classCheck}\" is present for locator {element.TagName}");
+                flag = true;
+            }
+            return flag;
+        }
+
     }
 }
